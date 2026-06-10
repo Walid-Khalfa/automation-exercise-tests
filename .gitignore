@@ -1,0 +1,28 @@
+# Environnement virtuel
+venv/
+.virtualenv/
+env/
+
+# Fichiers Python compilés
+__pycache__/
+*.pyc
+*.pyo
+
+# Rapports et captures
+report.html
+create_account_failure.png
+dump.html
+.pytest_cache/
+
+# Fichiers de debug
+patch_base.py
+test_debug.py
+
+# Fichiers de log et temporaires
+*.log
+*.tmp
+.DS_Store
+
+# Playwright
+test-results/
+playwright-report/
