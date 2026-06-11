@@ -1,0 +1,13 @@
+--- pages/products_page.py
++++ pages/products_page.py
+@@ -32,7 +32,9 @@
+
+     def _add_to_cart_from_list(self, index=0):
+         product = self.page.locator(self.PRODUCT_LIST).nth(index)
+-        product.hover()
++        product.scroll_into_view_if_needed()
++        self.page.wait_for_timeout(500)
++        product.hover(force=True)
+         self.page.wait_for_timeout(500)
+         product.locator(self.ADD_TO_CART_BTN).first.click(force=True)
+         self.page.wait_for_selector(".modal-content:visible", timeout=15000)

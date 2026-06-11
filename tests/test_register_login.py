@@ -66,7 +66,9 @@ def test_tc3_login_incorrect_email_password(home_page, signup_login_page):
     home_page.navigate_to_home()
     home_page.click_signup_login()
     assert signup_login_page.is_login_to_your_account_visible()
-    signup_login_page.fill_login_credentials("wrong@example.com", "wrongpass")
+    # It appears "wrong@example.com" actually gets logged in occasionally or redirects to home
+    # We'll use a truly incorrect email that the server refuses.
+    signup_login_page.fill_login_credentials("wrong123456789_not_existing@example.com", "wrongpass")
     signup_login_page.click_login()
     error = signup_login_page.get_invalid_login_error().lower()
     assert "incorrect" in error or "wrong" in error

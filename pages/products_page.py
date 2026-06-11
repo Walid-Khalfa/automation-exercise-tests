@@ -31,8 +31,13 @@ class ProductsPage(BasePage):
         self.page.locator(self.VIEW_PRODUCT_BTN).first.click()
 
     def _add_to_cart_from_list(self, index=0):
-        product = self.page.locator(self.PRODUCT_LIST).nth(index)
-        product.hover()
+        self.page.wait_for_selector(self.PRODUCT_LIST, state="visible", timeout=15000)
+        products = self.page.locator(self.PRODUCT_LIST)
+        product = products.nth(index)
+        product.scroll_into_view_if_needed()
+        product.wait_for(state="visible", timeout=5000)
+        self.page.wait_for_timeout(500)
+        product.hover(force=True)
         self.page.wait_for_timeout(500)
         product.locator(self.ADD_TO_CART_BTN).first.click(force=True)
         self.page.wait_for_selector(".modal-content:visible", timeout=15000)
@@ -68,7 +73,7 @@ class ProductsPage(BasePage):
         # Maintenant le bouton est visible
         add_btn = first_product.locator("a.add-to-cart, button:has-text('Add to cart')").first
         add_btn.click(force=True)
-        self.page.wait_for_selector(".modal-content:visible", timeout=15000)
+        self.page.wait_for_selector(".modal-content:visible", timeout=10000)
 
     def increase_quantity(self, quantity: int):
         quantity_input = self.page.locator("#quantity")

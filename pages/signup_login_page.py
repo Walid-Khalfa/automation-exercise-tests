@@ -23,7 +23,12 @@ class SignupLoginPage(BasePage):
         self.click(self.SIGNUP_BUTTON)
 
     def is_login_to_your_account_visible(self):
-        return self.is_visible(self.LOGIN_TO_YOUR_ACCOUNT_TEXT)
+        # Allow some time for rendering after ads or redirects
+        try:
+            self.page.locator(self.LOGIN_TO_YOUR_ACCOUNT_TEXT).first.wait_for(state="visible", timeout=10000)
+            return True
+        except:
+            return False
 
     def fill_login_credentials(self, email, password):
         self.page.locator(self.LOGIN_EMAIL).wait_for(state="visible", timeout=10000)
@@ -34,32 +39,11 @@ class SignupLoginPage(BasePage):
         self.click(self.LOGIN_BUTTON)
 
     def get_invalid_login_error(self):
-        # Le message d'erreur peut être dans un p avec style rouge ou texte exact
-        error_locators = [
-            "p:has-text('Your email or password is incorrect!')",
-            ".login-form p[style*='color: red']",
-            ".login-form p:has-text('incorrect')"
-        ]
-        for loc in error_locators:
-            try:
-                error = self.page.locator(loc).first
-                error.wait_for(state="visible", timeout=5000)
-                return error.text_content()
-            except:
-                continue
-        raise Exception("Aucun message d'erreur trouvé")
+        error = self.page.get_by_text("Your email or password is incorrect!")
+        error.wait_for(state="visible", timeout=10000)
+        return error.text_content()
 
     def get_email_already_exist_error(self):
-        error_locators = [
-            "p:has-text('Email Address already exist!')",
-            ".signup-form p[style*='color: red']",
-            ".signup-form p:has-text('already exist')"
-        ]
-        for loc in error_locators:
-            try:
-                error = self.page.locator(loc).first
-                error.wait_for(state="visible", timeout=5000)
-                return error.text_content()
-            except:
-                continue
-        raise Exception("Aucun message d'erreur trouvé")
+        error = self.page.locator(".signup-form p", has_text="already exist")
+        error.wait_for(state="visible", timeout=10000)
+        return error.text_content()

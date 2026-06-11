@@ -17,10 +17,11 @@ jobs:
           python-version: '3.11'
       - name: Install dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
           playwright install chromium
       - name: Run tests
-        run: pytest tests/ --headed=False --browser=chromium --html=report.html
+        run: pytest tests/ -v --headed=False --browser=chromium --html=report.html
       - name: Upload report
         if: always()
         uses: actions/upload-artifact@v4

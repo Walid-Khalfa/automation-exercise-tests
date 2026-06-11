@@ -19,7 +19,10 @@ class CartPage(BasePage):
         return rows.count()
 
     def click_proceed_to_checkout(self):
-        self.page.locator(self.PROCEED_TO_CHECKOUT_BTN).first.click(force=True)
+        checkout_btn = self.page.locator(self.PROCEED_TO_CHECKOUT_BTN).first
+        checkout_btn.wait_for(state="visible", timeout=10000)
+        checkout_btn.click(force=True)
+        self.page.wait_for_timeout(500)
 
     def click_register_login_from_checkout(self):
         self.click(self.REGISTER_LOGIN_LINK)

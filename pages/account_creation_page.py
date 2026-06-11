@@ -84,8 +84,10 @@ class AccountCreationPage(BasePage):
                 return
             except:
                 continue
-        # Dernier recours : texte exact
-        self.page.get_by_text("Continue", exact=True).first.click(force=True)
+        # Dernier recours : texte exact avec attente explicite
+        continue_btn = self.page.get_by_text("Continue", exact=True).first
+        continue_btn.wait_for(state="visible", timeout=10000)
+        continue_btn.click(force=True)
 
     def click_delete_account(self):
         self.click(self.DELETE_ACCOUNT_BTN)
