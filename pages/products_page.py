@@ -31,14 +31,14 @@ class ProductsPage(BasePage):
         return self.page.locator(self.PRODUCT_LIST).all()
 
     def click_view_product_of_first(self):
-        self.page.locator(self.VIEW_PRODUCT_BTN).first.click()
+        self.page.locator(self.VIEW_PRODUCT_BTN).first.click(timeout=TIMEOUT)
 
     def _add_to_cart_from_list(self, index=0):
         product = self.page.locator(self.PRODUCT_LIST).nth(index)
         product.hover()
         self.page.wait_for_timeout(500)
         product.locator(self.ADD_TO_CART_BTN).first.click(force=True)
-        self.page.wait_for_selector(".modal-content:visible", timeout=15000)
+        self.page.wait_for_selector(".modal-content:visible", timeout=TIMEOUT)
 
     def add_first_product_to_cart(self):
         if "/product_details/" in self.page.url:
@@ -50,12 +50,18 @@ class ProductsPage(BasePage):
         self._add_to_cart_from_list(1)
 
     def click_continue_shopping(self):
-        self.page.wait_for_selector(".modal-content:visible", timeout=5000)
-        self.page.locator("button:has-text('Continue Shopping')").click(force=True)
-        self.page.wait_for_selector(".modal-content", state="hidden")
+        self.page.wait_for_selector(".modal-content:visible", timeout=TIMEOUT)
+        self.page.locator("button:has-text('Continue Shopping')").click(force=True, timeout=TIMEOUT)
+        self.page.wait_for_selector(".modal-content", state="hidden", timeout=TIMEOUT)
 
     def click_view_cart(self):
         self.click(self.VIEW_CART_LINK)
+        # The "View Cart" link inside the added-to-cart modal navigates to
+        # /view_cart, but the round-trip can race with the test (especially
+        # when an ad iframe intercepts the click). Wait for the cart page
+        # URL to surface so the next action reads #cart_info_table against
+        # the real /view_cart DOM, not the stale products DOM.
+        self.page.wait_for_url("**/view_cart*", timeout=TIMEOUT)
 
     def is_recommended_items_visible(self):
         return self.is_visible(self.RECOMMENDED_ITEMS_SECTION)

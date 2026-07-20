@@ -24,6 +24,26 @@ from pages.category_page import CategoryPage
 from pages.brand_page import BrandPage
 from utils.helpers import generate_random_user_data
 from utils.data_loader import load_json
+from config.settings import TIMEOUT
+
+
+@pytest.fixture(autouse=True)
+def _set_default_page_timeouts(page: Page):
+    """Raise Playwright's default action / navigation timeouts to TIMEOUT.
+
+    Without this, every implicit navigation triggered by a click (e.g.
+    `<a>` link navigation, form submit) would fall back to Playwright's
+    built-in 30,000ms ceiling even when callers pass `timeout=TIMEOUT`
+    explicitly -- because `timeout=` only applies to the locator's
+    actionability wait, not to the navigation that follows it.
+
+    Setting both defaults to TIMEOUT (60s) aligns the two layers and is
+    what makes the navigation-aware helpers below (wait_for_url,
+    wait_for_load_state) actually use the project's budget instead of
+    the hidden 30s global.
+    """
+    page.set_default_timeout(TIMEOUT)
+    page.set_default_navigation_timeout(TIMEOUT)
 
 @pytest.fixture(scope="function")
 def home_page(page: Page):
