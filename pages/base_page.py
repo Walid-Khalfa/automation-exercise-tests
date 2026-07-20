@@ -1,4 +1,5 @@
 from playwright.sync_api import Page
+from config.settings import TIMEOUT
 
 class BasePage:
     def __init__(self, page: Page):
@@ -7,7 +8,7 @@ class BasePage:
     def navigate(self, url, retries=2):
         for i in range(retries):
             try:
-                self.page.goto(url, timeout=60000, wait_until="domcontentloaded")
+                self.page.goto(url, timeout=TIMEOUT, wait_until="domcontentloaded")
                 return
             except Exception as e:
                 if i == retries - 1:

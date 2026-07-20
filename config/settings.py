@@ -1,2 +1,2 @@
 BASE_URL = "http://automationexercise.com"
-TIMEOUT = 30000
+TIMEOUT = 60000
