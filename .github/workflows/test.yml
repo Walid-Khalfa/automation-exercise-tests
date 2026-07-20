@@ -20,7 +20,7 @@ jobs:
           pip install -r requirements.txt
           playwright install chromium
       - name: Run tests
-        run: pytest tests/ --headed=False --browser=chromium --html=report.html
+        run: pytest tests/ --browser=chromium --html=report.html
       - name: Upload report
         if: always()
         uses: actions/upload-artifact@v4
