@@ -9,7 +9,7 @@ class HomePage(BasePage):
     CONTACT_US_BTN = "a[href='/contact_us']"
     TEST_CASES_BTN = "a[href='/test_cases']"
     HOME_PAGE_LOGO = "img[alt='Website for automation practice']"
-    FOOTER_SUBSCRIPTION_TEXT = "h2:has-text('Subscription')"
+    FOOTER_SUBSCRIPTION_TEXT = "h2:text-is('Subscription')"
     SUBSCRIPTION_EMAIL_INPUT = "#susbscribe_email"
     SUBSCRIPTION_BUTTON = "#subscribe"
     SUBSCRIPTION_SUCCESS = "#success-subscribe"
