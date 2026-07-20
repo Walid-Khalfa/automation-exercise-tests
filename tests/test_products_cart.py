@@ -86,7 +86,6 @@ def test_tc21_add_review_on_product(home_page, products_page):
     home_page.click("#button-review")
     assert "Thank you for your review" in home_page.page.locator(".alert-success").first.inner_text()
 
-@pytest.mark.xfail(reason="recommended-items hover interaction unreliable -- see fix/remaining-fails", strict=False)
 def test_tc22_add_to_cart_from_recommended_items(home_page, products_page, cart_page):
     home_page.navigate_to_home()
     home_page.scroll_down_to_footer()

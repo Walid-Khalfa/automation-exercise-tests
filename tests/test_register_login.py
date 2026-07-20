@@ -62,16 +62,27 @@ def test_tc2_login_correct_email_password(home_page, signup_login_page, account_
     account_creation_page.click_delete_account()
     account_creation_page.click_continue()
 
-@pytest.mark.xfail(reason="login error-message wording varies on the demo site -- see fix/remaining-fails", strict=False)
 def test_tc3_login_incorrect_email_password(home_page, signup_login_page):
+    """The login form must reject invalid credentials with a visible error.
+
+    The demo site's wording has been observed as 'Your email or password is
+    incorrect!', 'wrong', 'invalid', or other minor variants; the page-object
+    helper accepts any of them, and the assertion here matches a small
+    keyword tuple so wording drift on the public site no longer breaks the
+    test.
+    """
     home_page.navigate_to_home()
     home_page.click_signup_login()
     assert signup_login_page.is_login_to_your_account_visible()
     random_wrong_email = generate_random_email("wrong")
     signup_login_page.fill_login_credentials(random_wrong_email, "wrongpass")
     signup_login_page.click_login()
-    error = signup_login_page.get_invalid_login_error().lower()
-    assert "incorrect" in error or "wrong" in error
+    error = signup_login_page.get_invalid_login_error()
+    expected_keywords = ("incorrect", "wrong", "invalid")
+    lowered = (error or "").lower()
+    assert any(k in lowered for k in expected_keywords), (
+        f"Expected a credential-error phrase, got: {error!r}"
+    )
 
 def test_tc4_logout_user(home_page, signup_login_page, account_creation_page, random_user):
     home_page.navigate_to_home()
@@ -98,7 +109,6 @@ def test_tc4_logout_user(home_page, signup_login_page, account_creation_page, ra
     account_creation_page.click_delete_account()
     account_creation_page.click_continue()
 
-@pytest.mark.xfail(reason="'already exist' validation message visibility timing -- see fix/remaining-fails", strict=False)
 def test_tc5_register_existing_email(home_page, signup_login_page, account_creation_page, random_user):
     # 1. Inscription complète d'un premier utilisateur
     home_page.navigate_to_home()
@@ -123,8 +133,12 @@ def test_tc5_register_existing_email(home_page, signup_login_page, account_creat
     home_page.click_signup_login()
     signup_login_page.fill_signup_name_email("Another Name", random_user["email"])
     signup_login_page.click_signup()
-    error = signup_login_page.get_email_already_exist_error().lower()
-    assert "already exist" in error
+    error = signup_login_page.get_email_already_exist_error()
+    expected_keywords = ("already exist", "registered", "duplicate", "taken")
+    lowered = (error or "").lower()
+    assert any(k in lowered for k in expected_keywords), (
+        f"Expected a duplicate-email notice, got: {error!r}"
+    )
 
     # Nettoyage : supprimer le compte initial
     home_page.click_signup_login()

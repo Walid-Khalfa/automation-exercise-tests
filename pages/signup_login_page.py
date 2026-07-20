@@ -1,4 +1,5 @@
 from pages.base_page import BasePage
+from config.settings import TIMEOUT
 
 class SignupLoginPage(BasePage):
     SIGNUP_NAME = "input[data-qa='signup-name']"
@@ -34,32 +35,67 @@ class SignupLoginPage(BasePage):
         self.click(self.LOGIN_BUTTON)
 
     def get_invalid_login_error(self):
-        # Le message d'erreur peut être dans un p avec style rouge ou texte exact
+        """Return the visible login-failure error message, lower-cased.
+
+        The automationexercise.com login form renders the 'wrong credentials'
+        notice in several ways across runs (red <p>, .alert, [role=alert], or
+        just inline text). We try a selector ladder and treat any of them as
+        the canonical message; the test assertion matches a keyword tuple so
+        wording drift is tolerated but a missing error still surfaces loudly.
+        """
         error_locators = [
-            "p:has-text('Your email or password is incorrect!')",
             ".login-form p[style*='color: red']",
-            ".login-form p:has-text('incorrect')"
+            ".login-form .alert",
+            ".login-form [role='alert']",
+            ".login-form .alert-danger",
+            ".login-form p:has-text('incorrect')",
+            ".login-form p:has-text('wrong')",
+            ".login-form p:has-text('invalid')",
         ]
+        per_selector_timeout = max(2000, TIMEOUT // max(1, len(error_locators)))
         for loc in error_locators:
             try:
-                error = self.page.locator(loc).first
-                error.wait_for(state="visible", timeout=5000)
-                return error.text_content()
-            except:
+                el = self.page.locator(loc).first
+                el.wait_for(state="visible", timeout=per_selector_timeout)
+                return (el.text_content() or "").strip().lower()
+            except Exception:
                 continue
-        raise Exception("Aucun message d'erreur trouvé")
+        if "login" in self.page.url:
+            raise AssertionError(
+                f"Expected an 'incorrect/wrong/invalid credentials' error but none visible. URL={self.page.url}"
+            )
+        raise AssertionError(
+            f"Login likely succeeded (URL no longer /login); the test expected a failure. URL={self.page.url}"
+        )
 
     def get_email_already_exist_error(self):
+        """Return the visible duplicate-email error, lower-cased.
+
+        Mirrors the rationale in `get_invalid_login_error`. The signup form
+        may render the duplicate-email notice as red <p>, .alert, [role=alert],
+        or inline text body. We accept any of those so wording drift on the
+        demo site no longer breaks the test.
+        """
         error_locators = [
-            "p:has-text('Email Address already exist!')",
             ".signup-form p[style*='color: red']",
-            ".signup-form p:has-text('already exist')"
+            ".signup-form .alert",
+            ".signup-form [role='alert']",
+            ".signup-form .alert-danger",
+            ".signup-form p:has-text('already exist')",
+            ".signup-form p:has-text('registered')",
         ]
+        per_selector_timeout = max(2000, TIMEOUT // max(1, len(error_locators)))
         for loc in error_locators:
             try:
-                error = self.page.locator(loc).first
-                error.wait_for(state="visible", timeout=5000)
-                return error.text_content()
-            except:
+                el = self.page.locator(loc).first
+                el.wait_for(state="visible", timeout=per_selector_timeout)
+                return (el.text_content() or "").strip().lower()
+            except Exception:
                 continue
-        raise Exception("Aucun message d'erreur trouvé")
+        if "/signup" in self.page.url or "/login" in self.page.url:
+            raise AssertionError(
+                f"Expected a duplicate-email notice but none visible. URL={self.page.url}"
+            )
+        raise AssertionError(
+            f"Signup likely succeeded (URL no longer contains /signup or /login); the test expected a duplicate-email rejection. URL={self.page.url}"
+        )

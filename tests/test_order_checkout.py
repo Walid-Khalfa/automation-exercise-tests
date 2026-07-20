@@ -1,6 +1,5 @@
 import pytest
 
-@pytest.mark.xfail(reason="payment-button network latency / order-success assertion flaky on demo site -- see fix/remaining-fails", strict=False)
 def test_tc14_place_order_register_while_checkout(home_page, products_page, cart_page, checkout_page, signup_login_page, account_creation_page, random_user, payment_data):
     home_page.navigate_to_home()
     home_page.click_products()
