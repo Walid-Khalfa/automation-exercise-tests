@@ -1,5 +1,5 @@
 from pages.base_page import BasePage
-from config.settings import BASE_URL
+from config.settings import BASE_URL, TIMEOUT
 
 class HomePage(BasePage):
     SIGNUP_LOGIN_BTN = "a[href='/login']"
@@ -25,20 +25,20 @@ class HomePage(BasePage):
 
     def click_signup_login(self):
         # Utilise le rôle "link" pour éviter l'ambiguïté
-        self.page.get_by_role("link", name="Signup / Login").click()
+        self.page.get_by_role("link", name="Signup / Login").click(timeout=TIMEOUT)
 
     def click_products(self):
         # Force le clic même si une pub intercepte
-        self.page.locator(self.PRODUCTS_BTN).first.click(force=True)
+        self.page.locator(self.PRODUCTS_BTN).first.click(force=True, timeout=TIMEOUT)
 
     def click_cart(self):
-        self.page.locator(self.CART_BTN).first.click(force=True)
+        self.page.locator(self.CART_BTN).first.click(force=True, timeout=TIMEOUT)
 
     def click_contact_us(self):
         self.click(self.CONTACT_US_BTN)
 
     def click_test_cases(self):
-        self.page.locator(self.TEST_CASES_BTN).first.click(force=True)
+        self.page.locator(self.TEST_CASES_BTN).first.click(force=True, timeout=TIMEOUT)
 
     def get_logged_in_user_text(self):
         return self.get_text(self.LOGGED_IN_USER)

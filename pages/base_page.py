@@ -18,20 +18,24 @@ class BasePage:
     def accept_consent(self):
         try:
             consent_btn = self.page.locator(".fc-button.fc-cta-consent")
-            consent_btn.wait_for(state="visible", timeout=5000)
+            consent_btn.wait_for(state="visible", timeout=TIMEOUT)
             consent_btn.click()
             self.page.wait_for_timeout(1000)
         except:
             pass
 
     def click(self, selector: str):
-        self.page.locator(selector).first.click()
+        self.page.locator(selector).first.click(timeout=TIMEOUT)
 
     def fill(self, selector: str, text: str):
-        self.page.locator(selector).first.fill(text)
+        self.page.locator(selector).first.fill(text, timeout=TIMEOUT)
 
     def get_text(self, selector: str) -> str:
-        return self.page.locator(selector).first.inner_text()
+        # inner_text() already auto-waits up to `timeout` for the locator to
+        # become actionable -- no need for an explicit wait_for(state="visible")
+        # first (that would have doubled per-fetch wait to 2*TIMEOUT in the
+        # worst case).
+        return self.page.locator(selector).first.inner_text(timeout=TIMEOUT)
 
     def is_visible(self, selector: str, timeout: int = 5000) -> bool:
         try:
