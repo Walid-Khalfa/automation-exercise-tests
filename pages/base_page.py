@@ -54,4 +54,5 @@ class BasePage:
         self.page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
 
     def scroll_to_top(self):
-        self.page.evaluate("window.scrollTo(0, 0)")
+        self.page.mouse.wheel(0, -10000)
+        self.page.wait_for_timeout(1000)
