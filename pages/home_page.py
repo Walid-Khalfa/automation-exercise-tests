@@ -62,4 +62,4 @@ class HomePage(BasePage):
         self.click(self.ARROW_UP_BUTTON)
 
     def is_full_fledged_text_visible(self):
-        return self.page.locator(self.FULL_FLEGED_TEXT).first.is_visible()
+        return self.is_visible(self.FULL_FLEGED_TEXT)
