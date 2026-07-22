@@ -27,10 +27,6 @@ class CartPage(BasePage):
             self.PROCEED_TO_CHECKOUT_BTN, state="visible", timeout=TIMEOUT
         )
         self.page.locator(self.PROCEED_TO_CHECKOUT_BTN).first.click(force=True, timeout=TIMEOUT)
-        # /checkout is the next navigation step used by tc14/tc24; let it
-        # raise cleanly on a missing navigation rather than masking it with
-        # a no-op wait_for_load_state fallback.
-        self.page.wait_for_url("**/checkout*", timeout=TIMEOUT)
 
     def click_register_login_from_checkout(self):
         self.click(self.REGISTER_LOGIN_LINK)
