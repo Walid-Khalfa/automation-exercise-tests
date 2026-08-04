@@ -1,6 +1,6 @@
-pytest==7.4.3
-pytest-playwright==0.4.3
-playwright==1.40.0
-faker==20.1.0
-pytest-html==4.1.1
-pytest-rerunfailures==12.0
+pytest>=7.4.3
+pytest-playwright>=0.4.3
+playwright>=1.49.0
+faker>=20.1.0
+pytest-html>=4.1.1
+pytest-rerunfailures>=12.0

@@ -1,11 +1,29 @@
 import os
+import sys
 from pathlib import Path
 
 import pytest
 
+
+def _playwright_browsers_path() -> Path:
+    """Resolve Playwright's browsers directory on any platform.
+
+    Playwright honors the PLAYWRIGHT_BROWSERS_PATH env var; otherwise it
+    defaults to ~/.cache/ms-playwright on Linux/macOS and to
+    %LOCALAPPDATA%/ms-playwright on Windows. The old hardcoded check on
+    the Unix path made the whole suite skip on Windows.
+    """
+    override = os.environ.get("PLAYWRIGHT_BROWSERS_PATH")
+    if override:
+        return Path(override)
+    if sys.platform == "win32":
+        local_app_data = os.environ.get("LOCALAPPDATA") or os.path.expanduser("~")
+        return Path(local_app_data) / "ms-playwright"
+    return Path.home() / ".cache" / "ms-playwright"
+
+
 # Skip tests at collection if Playwright browsers are not installed
-_playwright_browsers_path = Path(os.path.expanduser("~/.cache/ms-playwright"))
-if not _playwright_browsers_path.exists():
+if not _playwright_browsers_path().exists():
     pytest.skip(
         "Playwright browsers not installed. Run 'python -m playwright install' to install browsers.",
         allow_module_level=True,

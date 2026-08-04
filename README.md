@@ -15,7 +15,7 @@ This project contains a **comprehensive automated test suite** for [Automation E
 ✅ **Page Object Model (POM)** for maintainable test code  
 ✅ **Data-Driven Testing** with external data sources  
 ✅ **Continuous Integration** with GitHub Actions  
-✅ **84% Pass Rate** (22/26 tests passing)  
+✅ **100% Pass Rate** (26/26 tests passing)  
 ✅ **Professional Test Reporting** with HTML artifacts  
 
 ---
@@ -248,21 +248,21 @@ pytest -vv --tb=long
 | Metric | Value |
 |--------|-------|
 | **Total Tests** | 26 |
-| **Passed** | 22 ✅ |
-| **Failed** | 4 ❌ |
-| **Success Rate** | 84% |
-| **Last Run** | CI/CD Pipeline |
+| **Passed** | 26 ✅ |
+| **Failed** | 0 ❌ |
+| **Success Rate** | 100% |
+| **Last Run** | Local + CI/CD Pipeline |
 
 ### Known Issues & Limitations
 
 | Issue | Root Cause | Workaround | Status |
 |-------|-----------|-----------|--------|
-| Error message display inconsistency | Website variation on login/registration feedback | Soft assertion or visual validation | Investigation ongoing |
-| Payment button timeout | Occasional network latency | Increase timeout threshold | In fix branch |
-| Add to favorites (recommended items) | Requires additional hover interaction | Enhanced interaction logic | Pending |
-| Form validation messages | Timing issue with element visibility | Added wait strategies | In fix branch |
-
-**Fix Branch:** `fix/remaining-fails` (contains solutions for all 4 known issues)
+| Error message display inconsistency | Website variation on login/registration feedback | Selector ladder + keyword-tolerant assertions | ✅ Fixed |
+| Payment button timeout | Occasional network latency | Poll success signals up to TIMEOUT (`is_order_successful`) | ✅ Fixed |
+| Add to favorites (recommended items) | Requires additional hover interaction | Hover + selector-ladder interaction logic | ✅ Fixed |
+| Form validation messages | Timing issue with element visibility | Robust wait strategies (60s default timeout) | ✅ Fixed |
+| Windows: suite skipped at collection | `conftest.py` hardcoded the Unix browser path `~/.cache/ms-playwright` | Cross-platform path resolution honoring `PLAYWRIGHT_BROWSERS_PATH` / `%LOCALAPPDATA%` | ✅ Fixed |
+| Local install on Python 3.13 | Old pins (`playwright==1.40.0`) pulled a `greenlet` source build requiring MSVC | Raised dependency floors to versions with prebuilt wheels | ✅ Fixed |
 
 ---
 
